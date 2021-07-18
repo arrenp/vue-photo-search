@@ -1,20 +1,52 @@
 <template>
-    <header class="mb-4 text-white">
-    <div>
-      <h3 class="float-md-start mb-0">Cover</h3>
-      <nav class="nav nav-masthead justify-content-center float-md-end">
-        <a class="nav-link active" aria-current="page" href="#">Home</a>
-        <a class="nav-link" href="#">Features</a>
-        <a class="nav-link" href="#">Contact</a>
-      </nav>
+  <nav class="navbar navbar-light fixed-top bg-white shadow-sm border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand">Propstr</a>
+      
+      <SearchField @search="search" :loading="loading" />
+
+      <img :src="jon" class="rounded-circle" alt="Jon" />
     </div>
-  </header>
+  </nav>
 </template>
 <script>
+import SearchField from "./SearchField";
+
 export default {
-    name: 'Header'
-}
+  name: "Header",
+  components: { SearchField },
+  emits: ["search"],
+  props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, { emit }) {
+    // jon
+    const jon = require("../assets/jon.png");
+
+    // emit search to parent
+    function search(val) {
+      emit("search", val);
+    }
+
+    return {
+      jon,
+      search,
+    };
+  },
+};
 </script>
-<style lang="">
-    
+<style lang="css" scoped>
+.rounded-circle {
+  height: 36px;
+  width: 36px;
+  object-fit: cover;
+}
+@media only screen and (max-width: 600px) {
+  .navbar-brand {
+    display: none;
+  }
+}
 </style>
