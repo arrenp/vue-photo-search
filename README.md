@@ -5,6 +5,13 @@
 npm install
 ```
 
+## Add src/config.js
+```
+export default {
+  client_id: 'YOUR_CLIENT_ID'
+}
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve
