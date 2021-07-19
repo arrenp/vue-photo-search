@@ -118,7 +118,7 @@ export default {
       });
 
       return instance
-        .get(`https://api.imgur.com/3/gallery/search/${page.value}?q=${term}`)
+        .get(`https://api.imgur.com/3/gallery/search/${page.value}?q_any=${term}&q_size_px=med&q_type=jpg`)
         .then((response) => {
           //show gallery
           inputView.value = true;
