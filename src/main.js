@@ -7,4 +7,12 @@ import loading from './assets/loading.jpg'
 createApp(App).use(lazyPlugin, {
     loading: loading,
     error: 'error.png'
-}).use(VueNumberFormat).mount('#app')
+}).use(VueNumberFormat, {
+    prefix: "",
+    suffix: "",
+    decimal: ".",
+    thousand: ",",
+    precision: 0,
+    acceptNegative: false,
+    isInteger: true,
+  }).mount('#app')

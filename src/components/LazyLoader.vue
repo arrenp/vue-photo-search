@@ -7,6 +7,8 @@
     :class="{ 'modal-max m-auto object-fit-contain': isModalCard }"
   >
     <source :src="link" type="video/mp4" />
+    <source :src="link" type="video/ogg" />
+    <source :src="defaultImg" type="image/png" />
     Video not found
   </video>
   <!-- else show img-->
@@ -54,6 +56,6 @@ export default {
 }
 
 .modal-max {
-  max-height: 90vh
+  max-height: 90vh;
 }
 </style>

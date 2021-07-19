@@ -118,9 +118,9 @@ export default {
       });
 
       return instance
-        .get(`https://api.imgur.com/3/gallery/search/${page.value}?q_any=${term}&q_size_px=med&q_type=jpg`)
+        .get(`https://api.imgur.com/3/gallery/search/${page.value}?q_any=${term}&q_size_px=med`)
         .then((response) => {
-          //show gallery
+          //hide message
           inputView.value = true;
           //set input value for scroll handler
           inputValue.value = term;
@@ -130,6 +130,7 @@ export default {
             response.data.data,
             Math.floor(response.data.data.length / colSize)
           );
+          
 
           if (page.value != 1) {
             images.value = iterateAndPushToArr(images.value, newArr);
@@ -224,5 +225,9 @@ body,
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.overflow-scroll {
+  scroll-behavior: smooth;
 }
 </style>

@@ -2,13 +2,13 @@
   <div class="container mt-5 h-100">
     <div class="row">
       <div
-        class="col-lg-3 col-sm-6 my-2 justify-content-center"
-        v-for="(col, i) in images"
-        :key="i"
+        class="col-lg-3 col-sm-6 px-1 my-2 justify-content-center"
+        v-for="(col, colIndex) in images"
+        :key="colIndex"
       >
         <ImageCard
-          v-for="(image, index) in col"
-          :key="index"
+          v-for="(image, cardIndex) in col"
+          :key="cardIndex"
           @mouseenter="mouseOn = image.id"
           @mouseleave="mouseOn = ''"
           @click="handleClick(image)"
@@ -37,6 +37,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    preload: {
+      type: Number,
+      default: 5
+    }
   },
   emits: ["handleClick"],
   setup(props, { emit }) {

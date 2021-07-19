@@ -3,18 +3,19 @@
     v-if="link"
     class="card my-4 overflow-hidden rounded-3"
     :class="{
-      grow: mouseOn === image.id,
+      'grow shadow': mouseOn === image.id,
       'modal-container flex-row': isModalCard,
       'cursor-pointer': !isModalCard,
     }"
   >
     <LazyLoader
-      :isVideo="contentType === 'video/mp4'"
+      :isVideo="imgObj.type === 'video/mp4'"
       :isModalCard="isModalCard"
-      :link="link"
+      :link="isNotCompressed ? link : thumbnailLink"
+      v-if="isNotCompressed ? link.value !== '' : thumbnailLink !== ''"
       :alt="image.title"
     />
-
+    <img v-if="isNotCompressed ? link === '': thumbnailLink === ''" :src="placeholder" />
     <div class="card-body text-start" v-if="!isModalCard">
       <div class="d-flex flex-wrap mb-2">
         <div class="me-2" v-for="(tag, index) in image.tags" :key="index">
@@ -37,15 +38,7 @@
         <small>
           views:
           {{
-            vueNumberFormat(image.views, {
-              prefix: "",
-              suffix: "",
-              decimal: ".",
-              thousand: ",",
-              precision: 0,
-              acceptNegative: false,
-              isInteger: true,
-            })
+            vueNumberFormat(image.views)
           }}
         </small>
       </p>
@@ -73,17 +66,65 @@ export default {
     },
   },
   setup(props) {
-    const link = ref(getNestedOrRootProperty(props.image, "link"));
-    const contentType = ref(getNestedOrRootProperty(props.image, "type"));
-  
-    function getNestedOrRootProperty(image, property) {
-      if (image.images) return image.images[0][property];
-      else return image[property];
+    const placeholder = require('../assets/loading.jpg');
+    const imgObj = ref(getNestedOrRoot(props.image))
+    const link = ref(imgObj.value.link);
+    const thumbnailLink = ref("");
+    const isNotCompressed = ref(imgObj.value.type === 'video/mp4' || props.isModalCard )
+
+
+    function getNestedOrRoot(image) {
+      if (image.images) return image.images[0];
+      else return image;
     }
+
     
+    const newBlob = ref({});
+    Promise.resolve(
+      fetch(link.value).then(processImageResponse).then(ResizeImage)
+    );
+
+    async function processImageResponse(response) {
+      if (isNotCompressed.value) return;
+
+      const blob = await response.blob();
+      newBlob.value = blob;
+    }
+
+    function ResizeImage() {
+      if (isNotCompressed.value) return;
+
+      const reader = new FileReader();
+      reader.readAsDataURL(newBlob.value);
+
+      reader.onload = function (event) {
+        const imgElement = document.createElement("img");
+        imgElement.src = event.target.result;
+
+        imgElement.onload = function (e) {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 320;
+
+          const scaleSize = MAX_WIDTH / e.target.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = e.target.height * scaleSize;
+
+          const ctx = canvas.getContext("2d");
+
+          ctx.drawImage(e.target, 0, 0, canvas.width, canvas.height);
+
+          const srcEncoded = ctx.canvas.toDataURL(e.target, "image/jpeg");
+          thumbnailLink.value = srcEncoded;
+        };
+      };
+    }
+
     return {
+      isNotCompressed,
       link,
-      contentType,
+      thumbnailLink,
+      placeholder,
+      imgObj
     };
   },
 };
@@ -120,7 +161,8 @@ export default {
 }
 
 .grow {
-  transform: scale(1.02);
+  transform: scale(1.009);
+
 }
 
 .card.modal-container {
