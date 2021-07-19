@@ -4,7 +4,7 @@
     class="card my-4 overflow-hidden rounded-3"
     :class="{
       grow: mouseOn === image.id,
-      'modal-container': isModalCard,
+      'modal-container flex-row': isModalCard,
       'cursor-pointer': !isModalCard,
     }"
   >
@@ -15,7 +15,7 @@
       :alt="image.title"
     />
 
-    <div class="card-body text-start" :class="{ 'rounded-3': isModalCard }">
+    <div class="card-body text-start" v-if="!isModalCard">
       <div class="d-flex flex-wrap mb-2">
         <div class="me-2" v-for="(tag, index) in image.tags" :key="index">
           <span class="badge rounded-pill bg-secondary shadow-sm">
@@ -75,12 +75,12 @@ export default {
   setup(props) {
     const link = ref(getNestedOrRootProperty(props.image, "link"));
     const contentType = ref(getNestedOrRootProperty(props.image, "type"));
-
+  
     function getNestedOrRootProperty(image, property) {
       if (image.images) return image.images[0][property];
       else return image[property];
     }
-
+    
     return {
       link,
       contentType,

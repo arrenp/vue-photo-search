@@ -2,11 +2,10 @@
   <div class="container mt-5 h-100">
     <div class="row">
       <div
-        class="col-md-3 my-2 justify-content-center"
+        class="col-lg-3 col-sm-6 my-2 justify-content-center"
         v-for="(col, i) in images"
         :key="i"
       >
-
         <ImageCard
           v-for="(image, index) in col"
           :key="index"

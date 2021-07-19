@@ -4,7 +4,7 @@
     v-if="isVideo"
     autoplay="autoplay"
     muted
-    :class="{ 'w-100 h-100 mb-4 object-fit-contain': isModalCard }"
+    :class="{ 'modal-max m-auto object-fit-contain': isModalCard }"
   >
     <source :src="link" type="video/mp4" />
     Video not found
@@ -15,7 +15,7 @@
     v-else
     class="card-img"
     :alt="alt"
-    :class="{ 'w-100 h-100 mb-4 object-fit-contain': isModalCard }"
+    :class="{ 'h-100 w-auto m-auto modal-max object-fit-contain': isModalCard }"
   />
 </template>
 <script>
@@ -51,5 +51,9 @@ export default {
 <style lang="css">
 .object-fit-contain {
   object-fit: contain;
+}
+
+.modal-max {
+  max-height: 90vh
 }
 </style>

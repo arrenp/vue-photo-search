@@ -66,7 +66,7 @@ export default {
     const onScroll = ({
       target: { scrollTop, clientHeight, scrollHeight },
     }) => {
-      if (scrollTop + clientHeight >= scrollHeight) {
+      if (scrollTop + clientHeight >= scrollHeight && !loading.value) {
         page.value = page.value + 1;
         search(inputValue.value, true);
       }

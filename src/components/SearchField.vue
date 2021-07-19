@@ -7,7 +7,6 @@
         placeholder="Search for images"
         aria-label="Search for images"
         v-model="inputValue"
-        tabindex="1"
         @keydown.enter="search"
         ref="input"
       />
