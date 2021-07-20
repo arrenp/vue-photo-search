@@ -2,7 +2,7 @@
   <div class="me-4 d-flex justify-content-between">
     <div class="position-relative">
       <input
-        class="form-control"
+        class="form-control  pe-4"
         type="text"
         placeholder="Search for images"
         aria-label="Search for images"
@@ -57,12 +57,19 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .spinner-border {
   width: 1.5rem;
   height: 1.5rem;
   top: 0.4rem;
   right: 0.4rem;
   font-size: 0.3rem;
+}
+
+@media only screen and (min-width: 600px) {
+  .form-control{
+    width: 300px
+  }
+  
 }
 </style>

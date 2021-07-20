@@ -1,7 +1,8 @@
 <template>
   <div
-    v-if="link"
+    v-if="image.image.link || image.image.type === 'video/mp4'"
     class="card my-4 overflow-hidden rounded-3"
+    ref="imgCard"
     :class="{
       'grow shadow': mouseOn === image.id,
       'modal-container flex-row': isModalCard,
@@ -9,13 +10,17 @@
     }"
   >
     <LazyLoader
-      :isVideo="imgObj.type === 'video/mp4'"
       :isModalCard="isModalCard"
-      :link="isNotCompressed ? link : thumbnailLink"
-      v-if="isNotCompressed ? link.value !== '' : thumbnailLink !== ''"
+      :link="useLink ? image.image.link : compressedImg"
+      v-if="compressedImg !== ''"
       :alt="image.title"
     />
-    <img v-if="isNotCompressed ? link === '': thumbnailLink === ''" :src="placeholder" />
+    <img
+      v-if="compressedImg === '' && !isModalCard"
+      :src="placeholder"
+      alt="Loading"
+      style="height: ${}image.image.width"
+    />
     <div class="card-body text-start" v-if="!isModalCard">
       <div class="d-flex flex-wrap mb-2">
         <div class="me-2" v-for="(tag, index) in image.tags" :key="index">
@@ -28,18 +33,14 @@
       <h6 class="card-title overflow-hidden ellipsis">
         {{ image.title }}
       </h6>
-      <p v-if="isModalCard" class="mb-0 overflow-hidden ellipsis">
-        {{ image.description }}
-      </p>
+
       <p class="mb-0">
-        <small>{{ image.account_url }}</small>
+        <small>{{ image.author }}</small>
       </p>
       <p class="mb-0">
         <small>
           views:
-          {{
-            vueNumberFormat(image.views)
-          }}
+          {{ vueNumberFormat(image.views) }}
         </small>
       </p>
     </div>
@@ -66,36 +67,45 @@ export default {
     },
   },
   setup(props) {
-    const placeholder = require('../assets/loading.jpg');
-    const imgObj = ref(getNestedOrRoot(props.image))
-    const link = ref(imgObj.value.link);
-    const thumbnailLink = ref("");
-    const isNotCompressed = ref(imgObj.value.type === 'video/mp4' || props.isModalCard )
+    //fallback
+    const placeholder = require("../assets/loading.jpg");
+    //compressed image
+    const compressedImg = ref("");
 
+    //max for scale calculation
+    const max = ref({
+      width: 320,
+      height: window.innerHeight - window.innerHeight * 0.1,
+    });
 
-    function getNestedOrRoot(image) {
-      if (image.images) return image.images[0];
-      else return image;
-    }
-
-    
-    const newBlob = ref({});
-    Promise.resolve(
-      fetch(link.value).then(processImageResponse).then(ResizeImage)
+    //fallback to regular link if edge case
+    const useLink = ref(
+      props.isModal &&
+        (window.innerWidth > 2650 ||
+          window.innerHeight > 1440 ||
+          props.image.image.height < max.value.height)
     );
 
-    async function processImageResponse(response) {
-      if (isNotCompressed.value) return;
-
-      const blob = await response.blob();
-      newBlob.value = blob;
+    if(useLink.value !== true){
+      getCompressed(props.image.image.link)
     }
 
-    function ResizeImage() {
-      if (isNotCompressed.value) return;
+    function getCompressed(link) {
+      Promise.resolve(
+        fetch(link)
+          .then(processImageResponse)
+          .then(ResizeImage)
+      );
+    }
 
+    async function processImageResponse(response) {
+      const blob = await response.blob();
+      return blob;
+    }
+
+    async function ResizeImage(response) {
       const reader = new FileReader();
-      reader.readAsDataURL(newBlob.value);
+      reader.readAsDataURL(response);
 
       reader.onload = function (event) {
         const imgElement = document.createElement("img");
@@ -103,28 +113,35 @@ export default {
 
         imgElement.onload = function (e) {
           const canvas = document.createElement("canvas");
-          const MAX_WIDTH = 320;
 
-          const scaleSize = MAX_WIDTH / e.target.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = e.target.height * scaleSize;
+          // if mobile or modal card, scale by height, else scale by width
+          let isMobile = window.innerWidth < 600;
+          if (!props.isModalCard || isMobile) {
+            scaleDimensions(canvas, e.target)
+          } else {
+            scaleDimensions(canvas, e.target, "height", "width")
+          }
 
           const ctx = canvas.getContext("2d");
 
           ctx.drawImage(e.target, 0, 0, canvas.width, canvas.height);
 
           const srcEncoded = ctx.canvas.toDataURL(e.target, "image/jpeg");
-          thumbnailLink.value = srcEncoded;
+          compressedImg.value = srcEncoded;
         };
       };
     }
 
+    function scaleDimensions(canvas, target, dim ="width", otherDim="height"){
+      let scaleSize = max.value[dim] / target[dim];
+      canvas[dim] = max.value[dim];
+      canvas[otherDim] = target[otherDim] * scaleSize;
+      return canvas
+    }
+
     return {
-      isNotCompressed,
-      link,
-      thumbnailLink,
+      compressedImg,
       placeholder,
-      imgObj
     };
   },
 };
@@ -162,7 +179,6 @@ export default {
 
 .grow {
   transform: scale(1.009);
-
 }
 
 .card.modal-container {

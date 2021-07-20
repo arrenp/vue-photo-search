@@ -28,10 +28,6 @@ export default {
     },
   },
   emits: ["close"],
-  setup(props) {
-
-    console.log(props.image)
-  }
 };
 </script>
 <style lang="css" scoped>

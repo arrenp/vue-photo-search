@@ -6,15 +6,15 @@
         v-for="(col, colIndex) in images"
         :key="colIndex"
       >
-        <ImageCard
-          v-for="(image, cardIndex) in col"
-          :key="cardIndex"
-          @mouseenter="mouseOn = image.id"
-          @mouseleave="mouseOn = ''"
-          @click="handleClick(image)"
-          :image="image"
-          :mouseOn="mouseOn"
-        />
+        <div v-for="(image, cardIndex) in col" class="h-0" :key="cardIndex">
+          <ImageCard
+            @mouseenter="mouseOn = image.id"
+            @mouseleave="mouseOn = ''"
+            @click="handleClick(image)"
+            :image="image"
+            :mouseOn="mouseOn"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -33,20 +33,13 @@ export default {
       type: Array,
       default: () => [],
     },
-    push: {
-      type: Boolean,
-      default: false,
-    },
-    preload: {
-      type: Number,
-      default: 5
-    }
   },
   emits: ["handleClick"],
   setup(props, { emit }) {
     //detect mouseover
     const mouseOn = ref("");
 
+    //emit click, sends image
     const handleClick = (image) => {
       emit("handleClick", image);
     };

@@ -1,7 +1,7 @@
 <template>
   <div
     ref="scrollContainer"
-    class="overflow-scroll text-center bg-off-white h-100"
+    class="overflow-scroll text-center pb-5 bg-off-white h-100"
     @scroll="onScroll"
   >
     <Header @search="search" :loading="loading || scrollLoading" />
@@ -11,12 +11,20 @@
         <ImageContainer
           v-if="inputView && !loading"
           :images="images"
-          :push="page != 1"
           @handle-click="handleCardClick"
         />
       </transition>
       <transition name="fade">
         <MainBodyMessage v-if="!inputView || appendMain" :message="message" />
+      </transition>
+      <transition name="fade">
+        <div
+          v-if="scrollLoading"
+          class="spinner-border spinner text-secondary"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </transition>
 
       <transition name="modal">
@@ -31,7 +39,7 @@
 import MainBodyMessage from "./components/MainBodyMessage.vue";
 import ImageContainer from "./components/ImageContainer.vue";
 import Header from "./components/Header.vue";
-import Footer from './components/Footer.vue';
+import Footer from "./components/Footer.vue";
 import Modal from "./components/Modal.vue";
 import config from "./config";
 import axios from "axios";
@@ -55,7 +63,7 @@ export default {
     const inputView = ref(false);
     const inputValue = ref("");
     const loading = ref(false);
-    const message = ref('WT');
+    const message = ref("WT");
     const soloImg = ref({});
     const show = ref(false);
     const images = ref([]);
@@ -67,6 +75,7 @@ export default {
       target: { scrollTop, clientHeight, scrollHeight },
     }) => {
       if (scrollTop + clientHeight >= scrollHeight && !loading.value) {
+        console.log(page.value, Math.floor(images.value[0].length/ page.value) + Math.floor(images.value[0].length/ 2));
         page.value = page.value + 1;
         search(inputValue.value, true);
       }
@@ -105,7 +114,7 @@ export default {
         loading.value = false;
         scrollLoading.value = false;
         //set message to no text
-        message.value = 'NT';
+        message.value = "NT";
       }
     };
 
@@ -118,19 +127,20 @@ export default {
       });
 
       return instance
-        .get(`https://api.imgur.com/3/gallery/search/${page.value}?q_any=${term}&q_size_px=med`)
+        .get(
+          `https://api.imgur.com/3/gallery/search/${page.value}?q_any=${term}&q_size_px=med`
+        )
         .then((response) => {
           //hide message
           inputView.value = true;
           //set input value for scroll handler
           inputValue.value = term;
 
+          // excludes videos and solves nested problem for albums 
+          let newArr = filterArr(response.data.data);
+
           // if scroll query, add new results to old results. Else set new results
-          let newArr = chunkArray(
-            response.data.data,
-            Math.floor(response.data.data.length / colSize)
-          );
-          
+          newArr = chunkArray(newArr, Math.floor(newArr.length / colSize));
 
           if (page.value != 1) {
             images.value = iterateAndPushToArr(images.value, newArr);
@@ -138,14 +148,11 @@ export default {
             images.value = newArr;
           }
 
-          // if no results, set and append no results message, else if results < max (-10 for api error handling), show end message
-          if (response.data.data.length < 1 && !scrollLoading.value) {
-            message.value = "NR";
+          // if no results and not scrolling, set and append no results message, else if no results and scrolling, show end message
+          if (newArr.length < 1 && !scrollLoading.value) {
+            message.value = scrollLoading.value ? "ER" : "NR";
             appendMain.value = true;
-          } else if (response.data.data.length < 50 && scrollLoading.value) {
-            message.value = "ER";
-            appendMain.value = true;
-          }
+          } 
         })
         .catch(function (error) {
           // handle error
@@ -161,6 +168,31 @@ export default {
         result.push(chunk);
       }
       return result;
+    }
+
+    function filterArr(data) {
+      let newArr = [];
+
+      for (let i = 0; i < data.length; i++) {
+        let image = getNestedOrRoot(data[i]);
+
+        if (image.type !== "video/mp4") {
+          let node = {
+            title: data[i].title,
+            author: data[i].account_url,
+            views: data[i].views,
+            id: image.id,
+            image: image,
+          };
+          newArr.push(node);
+        }
+      }
+      return newArr;
+    }
+
+    function getNestedOrRoot(image) {
+      if (image.images) return image.images[0];
+      else return image;
     }
 
     function iterateAndPushToArr(oldArr, newArr) {
@@ -229,5 +261,11 @@ body,
 
 .overflow-scroll {
   scroll-behavior: smooth;
+}
+
+.spinner {
+  margin-top: 100px;
+  height: 50px;
+  width: 50px;
 }
 </style>
