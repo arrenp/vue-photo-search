@@ -37,12 +37,11 @@
 <script>
 import MainBodyMessage from "./components/MainBodyMessage.vue";
 import ImageContainer from "./components/ImageContainer.vue";
+import ImageComposable from './composables/Images'
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 import Modal from "./components/Modal.vue";
-import ImageComposable from './composables/Images'
 import { ref } from "vue";
-
 
 export default {
   name: "App",
@@ -54,9 +53,9 @@ export default {
     Modal,
   },
   setup() {
+    const showModal = ref(false);
     const inputValue = ref("");
     const soloImg = ref({});
-    const showModal = ref(false);
     const page = ref(1);
 
     // Fetch factory
@@ -136,6 +135,10 @@ body,
 
 .overflow-scroll {
   scroll-behavior: smooth;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
 }
 
 .spinner {

@@ -32,8 +32,8 @@ export default {
     }
 
     return {
-      jon,
       search,
+      jon,
     };
   },
 };

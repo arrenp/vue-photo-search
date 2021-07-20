@@ -3,7 +3,7 @@
     v-lazy="link ?? defaultImg"
     class="card-img"
     :alt="alt"
-    :class="{ 'h-100 w-auto m-auto modal-max object-fit-contain': isModalCard }"
+    :class="{ 'h-100 w-100 m-auto modal-max object-fit-contain': isModalCard }"
   />
 </template>
 <script>

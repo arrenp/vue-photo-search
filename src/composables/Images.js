@@ -6,24 +6,27 @@ import config from "../config";
 const colSize = 4;
 
 export default function () {
-    const images = ref([]);
     const scrollLoading = ref(false);
     const appendMain = ref(false);
     const inputView = ref(false);
     const loading = ref(false);
     const message = ref("WT");
+    const images = ref([]);
     const page = ref(1)
 
     async function search(term = "", scrollLoad = false, newPage) {
+        //init
         appendMain.value = false;
         page.value = newPage;
         message.value = "NT";
+
         // re-init page, set loading state, and cancel previous request(s) if not scroll
         if (scrollLoad === false) {
             loading.value = true;
         } else {
             scrollLoading.value = true;
         }
+
         //call api if search term, else clear image array and show default
         if (term !== "") {
             await fetchImages(term).then(() => {
@@ -45,6 +48,7 @@ export default function () {
     //call api
     const fetchImages = (term) => {
         let cancelToken;
+
         //Check if there are any previous pending requests
         if (typeof cancelToken != typeof undefined) {
             cancelToken.cancel("Operation canceled due to new request.");
@@ -52,6 +56,7 @@ export default function () {
 
         //Save the cancel token for the current request
         cancelToken = axios.CancelToken.source();
+
         //set headers
         const instance = axios.create({
             headers: { Authorization: `Client-ID ${config.client_id}` },
@@ -79,7 +84,7 @@ export default function () {
                     images.value = newArr;
                 }
 
-                // if no results and not scrolling, set and append no results message, else if no results and scrolling, show end message
+                // if no results, set and append either end or no results message based on scroll state
                 if (newArr.length < 1) {
                     message.value = scrollLoading.value ? "ER" : "NR";
                     appendMain.value = true;
@@ -102,7 +107,7 @@ export default function () {
         return result;
     }
 
-    //solves video issue and nested album issue, standardizes array
+    //removes video and solves nested album issue, standardizes image object
     function filterArr(data) {
         let newArr = [];
 
@@ -131,6 +136,7 @@ export default function () {
 
     function iterateAndPushToArr(oldArr, newArr) {
         if (newArr.length === 0) return oldArr;
+
         for (let i = 0; i < oldArr.length; i++) {
             oldArr[i] = oldArr[i].concat(newArr[i]);
         }

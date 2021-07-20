@@ -43,11 +43,10 @@ export default {
     const handleClick = (image) => {
       emit("handleClick", image);
     };
-    console.log(props.images)
 
     return {
-      mouseOn,
       handleClick,
+      mouseOn,
     };
   },
 };
