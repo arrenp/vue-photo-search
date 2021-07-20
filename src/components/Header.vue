@@ -5,7 +5,7 @@
       
       <SearchField @search="search" :loading="loading" />
 
-      <img :src="jon" class="rounded-circle" alt="Jon" />
+      <img :src="jon" class="rounded-circle jon" alt="Jon" />
     </div>
   </nav>
 </template>
@@ -46,6 +46,11 @@ export default {
 }
 @media only screen and (max-width: 600px) {
   .navbar-brand {
+    display: none;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .jon {
     display: none;
   }
 }
