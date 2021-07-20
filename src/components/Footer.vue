@@ -3,7 +3,7 @@
   <div class="container d-flex justify-content-between">
     <div class="text-muted">
         <small class="me-2">Arren Propster</small>
-        <small><a href="mailto: arrenpropster@gmail.com" class="text-muted">arrenpropster@gmail.com</a></small>
+        <small><a href="mailto: arrenpropster@gmail.com" class="text-muted email">arrenpropster@gmail.com</a></small>
     </div>
     <div>
         <a href="https://www.linkedin.com/in/arrenpropster" target="_blank" class="me-2">
@@ -30,3 +30,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+@media only screen and (max-width: 400px) {
+  .email {
+    display: none;
+  }
+}
+</style>

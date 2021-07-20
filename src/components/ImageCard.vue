@@ -22,7 +22,7 @@
       :src="placeholder"
       alt="Loading"
     />
-    <div class="card-body text-start" v-if="!isModalCard">
+    <div class="card-body bg-white text-start" v-if="!isModalCard">
       <div class="d-flex flex-wrap mb-2">
         <div class="me-2" v-for="(tag, index) in image.tags" :key="index">
           <span class="badge rounded-pill bg-secondary shadow-sm">
@@ -49,7 +49,7 @@
 </template>
 <script>
 import LazyLoader from "./LazyLoader.vue";
-import ImageComposable from '../composables/Image'
+import ImageComposable from "../composables/Image";
 export default {
   components: { LazyLoader },
   name: "ImageCard",
@@ -71,13 +71,10 @@ export default {
     //fallback
     const placeholder = require("../assets/loading.jpg");
     // Fetch factory
-    const {
-      compressedImg,
-      getCompressedImage
-    } = ImageComposable();
+    const { compressedImg, getCompressedImage } = ImageComposable();
 
-    getCompressedImage(props.image.image.link, props.isModalCard)
-    
+    getCompressedImage(props.image.image.link, props.isModalCard);
+
     return {
       compressedImg,
       placeholder,
@@ -86,16 +83,6 @@ export default {
 };
 </script>
 <style lang="css" scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
 .card {
   width: 100%;
   object-fit: cover;
@@ -105,10 +92,6 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.card-body {
-  background-color: #fff;
 }
 
 .ellipsis {

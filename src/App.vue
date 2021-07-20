@@ -66,10 +66,10 @@ export default {
 
     // Fetch factory
     const {
+      images,
       search,
       loading,
       message,
-      images,
       inputView,
       appendMain,
       scrollLoading,
