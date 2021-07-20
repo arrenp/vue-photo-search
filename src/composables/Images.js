@@ -15,8 +15,6 @@ export default function () {
     const page = ref(1)
 
     async function search(term = "", scrollLoad = false, newPage) {
-
-
         appendMain.value = false;
         page.value = newPage;
         message.value = "NT";
@@ -93,6 +91,7 @@ export default function () {
             });
     };
 
+    // create columns
     function chunkArray(array, size) {
         let result = [];
         //balances columns via jettisoning remainder. If needed, can add iteration to add them to start columns.
@@ -103,6 +102,7 @@ export default function () {
         return result;
     }
 
+    //solves video issue and nested album issue, standardizes array
     function filterArr(data) {
         let newArr = [];
 
@@ -116,6 +116,7 @@ export default function () {
                     views: data[i].views,
                     id: image.id,
                     image: image,
+                    tags: data[i].tags
                 };
                 newArr.push(node);
             }

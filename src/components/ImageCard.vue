@@ -19,7 +19,6 @@
       v-if="compressedImg === '' && !isModalCard"
       :src="placeholder"
       alt="Loading"
-      style="height: ${}image.image.width"
     />
     <div class="card-body text-start" v-if="!isModalCard">
       <div class="d-flex flex-wrap mb-2">
@@ -90,6 +89,7 @@ export default {
       getCompressed(props.image.image.link)
     }
 
+    //TODO move compression to composable
     function getCompressed(link) {
       Promise.resolve(
         fetch(link)
