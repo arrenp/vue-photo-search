@@ -72,7 +72,6 @@ export default {
     const placeholder = require("../assets/loading.jpg");
     //compressed image
     const compressedImg = ref("");
-    console.log();
     //max for scale calculation
     const max = ref({
       width: 320,
