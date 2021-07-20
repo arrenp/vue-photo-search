@@ -1,7 +1,7 @@
 <template>
   <div
     ref="scrollContainer"
-    class="overflow-scroll text-center pb-5 bg-off-white h-100"
+    class="overflow-scroll overflow-x-hidden text-center pb-5 bg-off-white h-100"
     @scroll="onScroll"
   >
     <Header @search="searchImgs" :loading="loading" />
@@ -66,7 +66,7 @@ export default {
     const onScroll = ({
       target: { scrollTop, clientHeight, scrollHeight },
     }) => {
-      if (scrollTop + clientHeight >= scrollHeight && !loading.value && !scrollLoading.value) {
+      if (scrollTop + clientHeight >= scrollHeight - 5 && !loading.value && !scrollLoading.value) {
         page.value = page.value + 1;
         search(inputValue.value, true, page.value);
       }
