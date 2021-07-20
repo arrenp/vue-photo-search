@@ -2,7 +2,7 @@
   <div class="container mt-5 h-100">
     <div class="row">
       <div
-        class="col-lg-3 col-sm-6 px-1 my-2 justify-content-center"
+        class="col-lg-2 col-sm-4 px-1 my-2 justify-content-center"
         v-for="(col, colIndex) in images"
         :key="colIndex"
       >
@@ -38,7 +38,6 @@ export default {
   setup(props, { emit }) {
     //detect mouseover
     const mouseOn = ref("");
-
     //emit click, sends image
     const handleClick = (image) => {
       emit("handleClick", image);

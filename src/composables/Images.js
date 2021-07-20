@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import config from "../config";
 
 //set amount of columns
-const colSize = 4;
+const colSize = 6;
 
 export default function () {
     const scrollLoading = ref(false);
@@ -115,15 +115,15 @@ export default function () {
             let image = getNestedOrRoot(data[i]);
 
             if (image.type !== "video/mp4") {
-                let node = {
+                
+                newArr.push({
                     title: data[i].title,
                     author: data[i].account_url,
                     views: data[i].views,
                     id: image.id,
                     image: image,
                     tags: data[i].tags
-                };
-                newArr.push(node);
+                });
             }
         }
         return newArr;

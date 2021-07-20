@@ -5,7 +5,7 @@ export default function () {
     const isModalCard = ref(false);
     //max for scale calculation
     const max = ref({
-        width: 320,
+        width: window.innerWidth < 600 ? 320 : 210,
         height: window.innerHeight - window.innerHeight * 0.1,
     });
 
@@ -35,8 +35,7 @@ export default function () {
                 const canvas = document.createElement("canvas");
 
                 // if mobile or modal card, scale by height, else scale by width
-                let isMobile = window.innerWidth < 600;
-                if (!isModalCard.value || isMobile) {
+                if (!isModalCard.value) {
                     scaleDimensions(canvas, e.target);
                 } else {
                     scaleDimensions(canvas, e.target, "height", "width");
