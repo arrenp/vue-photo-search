@@ -1,7 +1,13 @@
 <template>
   <div
     ref="scrollContainer"
-    class="overflow-scroll overflow-x-hidden text-center pb-5 bg-off-white h-100"
+    class="
+      overflow-scroll overflow-x-hidden
+      text-center
+      pb-5
+      bg-off-white
+      h-100
+    "
     @scroll="onScroll"
   >
     <Header @search="searchImgs" :loading="loading" />
@@ -37,7 +43,7 @@
 <script>
 import MainBodyMessage from "./components/MainBodyMessage.vue";
 import ImageContainer from "./components/ImageContainer.vue";
-import ImageComposable from './composables/Images'
+import ImagesComposable from "./composables/Images";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 import Modal from "./components/Modal.vue";
@@ -59,22 +65,34 @@ export default {
     const page = ref(1);
 
     // Fetch factory
-    const { search, loading, message, images, inputView, appendMain, scrollLoading} = ImageComposable();
+    const {
+      search,
+      loading,
+      message,
+      images,
+      inputView,
+      appendMain,
+      scrollLoading,
+    } = ImagesComposable();
 
     //scroll listener
     const onScroll = ({
       target: { scrollTop, clientHeight, scrollHeight },
     }) => {
-      if (scrollTop + clientHeight >= scrollHeight - 5 && !loading.value && !scrollLoading.value) {
+      if (
+        scrollTop + clientHeight >= scrollHeight - 5 &&
+        !loading.value &&
+        !scrollLoading.value
+      ) {
         page.value = page.value + 1;
         search(inputValue.value, true, page.value);
       }
     };
 
-    function searchImgs(term){
+    function searchImgs(term) {
       inputValue.value = term;
       inputView.value = false;
-      search(term, false, 1)
+      search(term, false, 1);
     }
 
     const handleCardClick = (image) => {

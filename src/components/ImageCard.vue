@@ -48,8 +48,8 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
 import LazyLoader from "./LazyLoader.vue";
+import ImageComposable from '../composables/Image'
 export default {
   components: { LazyLoader },
   name: "ImageCard",
@@ -70,65 +70,14 @@ export default {
   setup(props) {
     //fallback
     const placeholder = require("../assets/loading.jpg");
-    //compressed image
-    const compressedImg = ref("");
-    //max for scale calculation
-    const max = ref({
-      width: 320,
-      height: window.innerHeight - window.innerHeight * 0.1,
-    });
+    // Fetch factory
+    const {
+      compressedImg,
+      getCompressedImage
+    } = ImageComposable();
 
-    //resize img based on current screen
-    Promise.resolve(
-      fetch(props.image.image.link).then(processImageResponse).then(ResizeImage)
-    );
-
-    async function processImageResponse(response) {
-      const blob = await response.blob();
-      return blob;
-    }
-
-    async function ResizeImage(response) {
-      const reader = new FileReader();
-      reader.readAsDataURL(response);
-
-      reader.onload = function (event) {
-        const imgElement = document.createElement("img");
-        imgElement.src = event.target.result;
-
-        imgElement.onload = function (e) {
-          const canvas = document.createElement("canvas");
-
-          // if mobile or modal card, scale by height, else scale by width
-          let isMobile = window.innerWidth < 600;
-          if (!props.isModalCard || isMobile) {
-            scaleDimensions(canvas, e.target);
-          } else {
-            scaleDimensions(canvas, e.target, "height", "width");
-          }
-
-          const ctx = canvas.getContext("2d");
-
-          ctx.drawImage(e.target, 0, 0, canvas.width, canvas.height);
-
-          const srcEncoded = ctx.canvas.toDataURL(e.target, "image/jpeg");
-          compressedImg.value = srcEncoded;
-        };
-      };
-    }
-
-    function scaleDimensions(
-      canvas,
-      target,
-      dim = "width",
-      otherDim = "height"
-    ) {
-      let scaleSize = max.value[dim] / target[dim];
-      canvas[dim] = max.value[dim];
-      canvas[otherDim] = target[otherDim] * scaleSize;
-      return canvas;
-    }
-
+    getCompressedImage(props.image.image.link, props.isModalCard)
+    
     return {
       compressedImg,
       placeholder,
