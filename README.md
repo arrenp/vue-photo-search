@@ -1,5 +1,5 @@
 # jons-photo-search
-
+A proxy such as ngrok is needed for CORS access
 ## Project setup
 ```
 npm install
